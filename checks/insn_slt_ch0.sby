@@ -1,0 +1,54 @@
+[options]
+mode bmc
+expect pass,fail
+append 0
+depth 21
+skip 20
+
+[engines]
+smtbmc boolector
+
+[script]
+read_verilog -sv insn_slt_ch0.sv
+read_verilog -sv topmodule_RISCV.sv
+read_verilog -sv IF/IF_stage.sv
+read_verilog -sv ID/ID_stage.sv
+read_verilog -sv EX/EX_stage.sv
+read_verilog -sv MEM/MEM_stage.sv
+read_verilog -sv WB/WB_stage.sv
+read_verilog -sv IFID_reg.sv
+read_verilog -sv IDEX_reg.sv
+read_verilog -sv EXMEM_reg.sv
+read_verilog -sv MEMWB_reg.sv
+read_verilog -sv cu.sv
+read_verilog -sv forward.sv
+read_verilog -sv hazard_unit.sv
+prep -flatten -nordff -top rvfi_testbench
+chformal -early
+
+[files]
+B:\dev\project\riscv/../../checks/rvfi_macros.vh
+B:\dev\project\riscv/../../checks/rvfi_channel.sv
+B:\dev\project\riscv/../../checks/rvfi_testbench.sv
+B:\dev\project\riscv/../../checks/rvfi_insn_check.sv
+B:\dev\project\riscv/../../insns/insn_slt.v
+
+[file defines.sv]
+`define RISCV_FORMAL
+`define RISCV_FORMAL_NRET 1
+`define RISCV_FORMAL_XLEN 32
+`define RISCV_FORMAL_ILEN 32
+`define RISCV_FORMAL_RESET_CYCLES 1
+`define RISCV_FORMAL_CHECK_CYCLE 20
+`define RISCV_FORMAL_CHANNEL_IDX 0
+`define RISCV_FORMAL_CHECKER rvfi_insn_check
+`define RISCV_FORMAL_INSN_MODEL rvfi_insn_slt
+`define RISCV_FORMAL
+`include "rvfi_macros.vh"
+
+[file insn_slt_ch0.sv]
+`include "defines.sv"
+`include "rvfi_channel.sv"
+`include "rvfi_testbench.sv"
+`include "rvfi_insn_check.sv"
+`include "insn_slt.v"

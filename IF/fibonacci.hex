@@ -1,0 +1,102 @@
+00500513
+10000113
+00c000ef
+00000063
+00000013
+ff410113
+00112423
+00a12223
+00200293
+02554263
+fff50513
+fe9ff0ef
+00a12023
+00412503
+ffe50513
+fd9ff0ef
+00012283
+00550533
+00812083
+00c10113
+00008067
+
+// ==========================================
+// MAIN PROGRAM
+// ==========================================
+// 0x00: Initialize Argument n = 5
+addi x10, x0, 5     
+
+// 0x04: Initialize Stack Pointer (sp) = 256
+addi x2,  x0, 256   
+
+// 0x08: Call Fib(5)
+jal  x1, 12         // Jump to 0x14 (Fib label)
+
+// 0x0C: Infinite Loop (Stop here)
+beq  x0, x0, 0      
+
+// 0x10: Padding (NOP) to align addresses if needed
+nop                 
+
+// ==========================================
+// FIBONACCI FUNCTION (Recursive)
+// ==========================================
+// 0x14: Allocate Stack Frame (12 bytes)
+Fib: 
+addi sp, sp, -12    
+
+// 0x18: Save Return Address (ra)
+sw   ra, 8(sp)      
+
+// 0x1C: Save Argument n (x10)
+sw   x10, 4(sp)     
+
+// 0x20: Base Case Check (if n < 2, return n)
+addi x5, x0, 2      
+blt  x10, x5, 36    // If x10 < 2, branch to Exit (0x48)
+
+// ------------------------------------------
+// Recursive Step: Fib(n-1)
+// ------------------------------------------
+// 0x28: Calculate n-1
+addi x10, x10, -1   
+
+// 0x2C: Call Fib(n-1)
+jal  ra, -24        // Jump back to Fib (0x14)
+
+// 0x30: Save Result of Fib(n-1) to Stack
+sw   x10, 0(sp)     
+
+// ------------------------------------------
+// Recursive Step: Fib(n-2)
+// ------------------------------------------
+// 0x34: Restore original n from Stack
+lw   x10, 4(sp)     
+
+// 0x38: Calculate n-2
+addi x10, x10, -2   
+
+// 0x3C: Call Fib(n-2)
+jal  ra, -40        // Jump back to Fib (0x14)
+
+// ------------------------------------------
+// Summation: Fib(n-1) + Fib(n-2)
+// ------------------------------------------
+// 0x40: Load result of Fib(n-1) into x5
+lw   x5, 0(sp)      
+
+// 0x44: Add Fib(n-1) + Fib(n-2) -> Result in x10
+add  x10, x10, x5   
+
+// ==========================================
+// EXIT / RETURN
+// ==========================================
+// 0x48: Restore Return Address
+Exit:
+lw   ra, 8(sp)      
+
+// 0x4C: Deallocate Stack Frame
+addi sp, sp, 12     
+
+// 0x50: Return to Caller
+jalr x0, 0(ra)

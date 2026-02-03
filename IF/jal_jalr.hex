@@ -1,0 +1,6 @@
+00a00513   // 00: addi x10, x0, 10   (x10 = 10)
+00c000ef   // 04: jal  x1, 12        (Jump to 0x10. x1 = 0x08)
+00150513   // 08: addi x10, x10, 1   (x10 = x10 + 1. Executes AFTER return)
+00000063   // 0C: beq  x0, x0, 0     (Infinite Loop / Stop)
+01450513   // 10: addi x10, x10, 20  (x10 = x10 + 20. Target of JAL)
+00008067   // 14: jalr x0, 0(x1)     (Jump to address in x1. Target = 0x08)

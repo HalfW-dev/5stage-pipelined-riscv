@@ -1,0 +1,38 @@
+# ==========================================
+# RISC-V Register-Only Bubble Sort (x1-x8)
+# ==========================================
+# 1. Initialization (Descending Order)
+addi x1, x0, 8
+addi x2, x0, 7
+addi x3, x0, 6
+addi x4, x0, 5
+addi x5, x0, 4
+addi x6, x0, 3
+addi x7, x0, 2
+addi x8, x0, 1
+
+# ==========================================
+# 2. Sorting Logic (Unrolled)
+# Logic: If xA < xB, skip the swap (Branch Taken).
+# If xA > xB, fall through and SWAP using x31.
+# ==========================================
+
+# --- Block 1 (x1 vs x2) ---
+blt  x1, x2, SKIP1
+add  x31, x0, x1    # Temp = Left
+add  x1, x0, x2     # Left = Right
+add  x2, x0, x31    # Right = Temp
+SKIP1:
+
+# --- Block 2 (x2 vs x3) ---
+blt  x2, x3, SKIP2
+add  x31, x0, x2
+add  x2, x0, x3
+add  x3, x0, x31
+SKIP2:
+
+# ... (Repeats for all pairs until sorted) ...
+
+# Final Infinite Loop
+DONE:
+beq x0, x0, DONE

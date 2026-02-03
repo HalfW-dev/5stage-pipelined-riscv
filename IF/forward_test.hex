@@ -1,0 +1,39 @@
+00a00093
+01400113
+002081b3
+40118233
+00f06293
+00100313
+0012f3b3
+00500413
+00500493
+00500513
+008405b3
+00720633
+00b606b3
+
+# 1. Initialize Values (No Hazards)
+addi x1, x0, 10      # x1 = 10 (0x0A)
+addi x2, x0, 20      # x2 = 20 (0x14)
+
+# 2. Test EX-to-EX Forwarding (Most critical)
+# 'add' produces x3 in EX. 'sub' needs x3 immediately in its own EX stage.
+add  x3, x1, x2      # x3 = 10 + 20 = 30 (0x1E)
+sub  x4, x3, x1      # x4 = 30 - 10 = 20 (0x14) <-- HAZARD! Needs x3 from EX/MEM
+
+# 3. Test MEM-to-EX Forwarding
+# 'ori' produces x5. Then a gap. Then 'and' uses x5.
+ori  x5, x0, 15      # x5 = 15 (0x0F)
+addi x6, x0, 1       # Dummy instruction to create 1 cycle gap
+and  x7, x5, x1      # x7 = 15 & 10 = 10 (0x0A) <-- HAZARD! Needs x5 from MEM/WB
+
+# 4. Test WB-to-ID Forwarding (The "Split Cycle" Logic)
+# 'addi' writes x8. 'add' reads x8 in the same cycle 'addi' is in WB.
+addi x8, x0, 5       # x8 = 5
+addi x9, x0, 5       # Dummy 1
+addi x10, x0, 5      # Dummy 2
+add  x11, x8, x8     # x11 = 5 + 5 = 10 (0x0A) <-- HAZARD! Reads x8 while x8 is writing
+
+# 5. Final check of accumulations
+add  x12, x4, x7     # x12 = 20 + 10 = 30 (0x1E)
+add  x13, x12, x11   # x13 = 30 + 10 = 40 (0x28)

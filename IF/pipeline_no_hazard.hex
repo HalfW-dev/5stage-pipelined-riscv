@@ -1,0 +1,47 @@
+00000093
+0aa00113
+0bb00193
+00000013
+00000013
+00000013
+00208023
+00000013
+00000013
+00000013
+003080a3
+00000013
+00000013
+00000013
+00009203
+00000013
+00000013
+00000013
+0000d283
+00000013
+00000013
+00000013
+00520333
+
+00000093 // 1.  addi x1, x0, 0      ; x1 = Base Address (0)
+0aa00113 // 2.  addi x2, x0, 170    ; x2 = 0xAA
+0bb00193 // 3.  addi x3, x0, 187    ; x3 = 0xBB
+00000013 // 4.  nop                 ; Bubble 1
+00000013 // 5.  nop                 ; Bubble 2
+00000013 // 6.  nop                 ; Bubble 3
+00208023 // 7.  sb   x2, 0(x1)      ; Mem[0] = 0xAA
+00000013 // 8.  nop                 ; Bubble (Structural safety)
+00000013 // 9.  nop
+00000013 // 10. nop
+003080a3 // 11. sb   x3, 1(x1)      ; Mem[1] = 0xBB
+00000013 // 12. nop                 ; Bubble 1
+00000013 // 13. nop                 ; Bubble 2
+00000013 // 14. nop                 ; Bubble 3
+00009203 // 15. lh   x4, 0(x1)      ; x4 = Load Half (Signed) -> Expect 0xFFFFBBAA
+00000013 // 16. nop                 ; Bubble 1
+00000013 // 17. nop                 ; Bubble 2
+00000013 // 18. nop                 ; Bubble 3
+0000d283 // 19. lhu  x5, 0(x1)      ; x5 = Load Half (Unsigned) -> Expect 0x0000BBAA
+00000013 // 20. nop
+00000013 // 21. nop
+00000013 // 22. nop
+00520333 // 23. add  x6, x4, x5     ; Verify: 0xFFFFBBAA + 0x0000BBAA
