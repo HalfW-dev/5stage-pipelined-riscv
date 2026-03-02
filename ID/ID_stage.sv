@@ -100,6 +100,7 @@ module ID_stage #(
                 rd     = i_instruction[11:7];
                 funct3 = i_instruction[14:12];
                 rs1    = i_instruction[19:15];
+                funct7 = i_instruction[31:25];
             end
 
             // ---------- S-type ----------
